@@ -1,0 +1,1139 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script>```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Business Communication Workshop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-dark: #0A0E27;
+            --primary-mid: #0F3443;
+            --primary-light: #0A4D4D;
+            --accent-teal: #64FFDA;
+            --accent-purple: #7C4DFF;
+            --accent-coral: #FF6B9D;
+            --accent-amber: #FFB74D;
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-shadow: rgba(0, 0, 0, 0.4);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-mid) 50%, var(--primary-light) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            position: relative;
+            background-attachment: fixed;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(100, 255, 218, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(124, 77, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(255, 107, 157, 0.1) 0%, transparent 50%);
+            animation: meshMove 20s ease-in-out infinite;
+            z-index: -1;
+        }
+        
+        @keyframes meshMove {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+        }
+        
+        .slide-container {
+            position: relative;
+            width: calc(100vw - 60px);
+            height: calc(100vh - 60px);
+            margin: 30px auto;
+            max-width: 1400px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px var(--glass-shadow),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .slide-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            padding: 40px 20px;
+        }
+        
+        .slide-wrapper::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .slide-wrapper::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        
+        .slide-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(100, 255, 218, 0.3);
+            border-radius: 4px;
+        }
+        
+        .slide-wrapper::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 255, 218, 0.5);
+        }
+        
+        .slide {
+            display: none;
+            min-height: calc(100vh - 180px);
+            padding: 20px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .slide-content {
+            width: 100%;
+            margin: auto 0;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--accent-teal) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 8px rgba(100, 255, 218, 0.3));
+        }
+        
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--text-primary);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--accent-teal) 0%, var(--accent-purple) 50%, var(--accent-coral) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 0 2px 8px rgba(100, 255, 218, 0.4);
+            animation: scalePulse 2s ease-in-out infinite;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        h3:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 16px rgba(100, 255, 218, 0.5);
+        }
+        
+        @keyframes scalePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        
+        p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .golden-rule {
+            background: linear-gradient(135deg, rgba(255, 183, 77, 0.15) 0%, rgba(255, 107, 157, 0.15) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 183, 77, 0.3);
+            border-radius: 20px;
+            padding: 35px;
+            text-align: center;
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin: 30px auto;
+            max-width: 800px;
+            box-shadow: 0 8px 32px rgba(255, 183, 77, 0.2),
+                        inset 0 2px 8px rgba(255, 255, 255, 0.1);
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 8px 32px rgba(255, 183, 77, 0.2), inset 0 2px 8px rgba(255, 255, 255, 0.1); }
+            50% { box-shadow: 0 8px 48px rgba(255, 183, 77, 0.4), inset 0 2px 12px rgba(255, 255, 255, 0.2); }
+        }
+        
+        .formula-box {
+            background: rgba(100, 255, 218, 0.08);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .formula-box::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--accent-teal), transparent, var(--accent-purple));
+            border-radius: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+        
+        .formula-box:hover::before {
+            opacity: 0.5;
+        }
+        
+        .script-box {
+            background: rgba(124, 77, 255, 0.08);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(124, 77, 255, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .script-box:hover {
+            background: rgba(124, 77, 255, 0.12);
+            transform: scale(1.02);
+        }
+        
+        .script-box::after {
+            content: 'Click to copy';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            color: var(--accent-purple);
+        }
+        
+        .script-box:hover::after {
+            opacity: 1;
+        }
+        
+        .example-box {
+            background: rgba(144, 238, 144, 0.1);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(144, 238, 144, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            font-style: italic;
+            border-left: 4px solid var(--accent-teal);
+        }
+        
+        .level-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        
+        .level-1 {
+            background: rgba(100, 255, 218, 0.2);
+            border: 1px solid rgba(100, 255, 218, 0.4);
+            color: var(--accent-teal);
+        }
+        
+        .level-2 {
+            background: rgba(124, 77, 255, 0.2);
+            border: 1px solid rgba(124, 77, 255, 0.4);
+            color: var(--accent-purple);
+        }
+        
+        .level-3 {
+            background: rgba(255, 107, 157, 0.2);
+            border: 1px solid rgba(255, 107, 157, 0.4);
+            color: var(--accent-coral);
+        }
+        
+        .navigation {
+            position: sticky;
+            bottom: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid var(--glass-border);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            z-index: 10;
+        }
+        
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(100, 255, 218, 0.1);
+            border-color: var(--accent-teal);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(100, 255, 218, 0.3);
+        }
+        
+        .slide-number {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            z-index: 5;
+        }
+        
+        .timer {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(255, 183, 77, 0.2) 0%, rgba(255, 183, 77, 0.1) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 183, 77, 0.4);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: var(--accent-amber);
+            margin-bottom: 20px;
+            animation: timerPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes timerPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+        
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+        
+        li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent-teal);
+            font-size: 1.4rem;
+            animation: bulletFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes bulletFloat {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(5px); }
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, rgba(100, 255, 218, 0.3) 0%, rgba(124, 77, 255, 0.3) 100%);
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(100, 255, 218, 0.2);
+        }
+        
+        .vietnamese {
+            color: var(--accent-coral);
+            font-style: italic;
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        .practice-scenario {
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.1) 0%, rgba(255, 183, 77, 0.1) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 107, 157, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .success-box {
+            background: rgba(144, 238, 144, 0.15);
+            border: 2px solid rgba(144, 238, 144, 0.4);
+            color: var(--text-primary);
+        }
+        
+        .error-box {
+            background: rgba(255, 107, 157, 0.15);
+            border: 2px solid rgba(255, 107, 157, 0.4);
+            color: var(--text-primary);
+        }
+        
+        .comparison-wrong {
+            background: rgba(255, 107, 157, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-coral);
+        }
+        
+        .comparison-right {
+            background: rgba(100, 255, 218, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-teal);
+        }
+        
+        .progress-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 5;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-teal) 0%, var(--accent-purple) 100%);
+            width: 4%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(100, 255, 218, 0.5);
+        }
+        
+        .icon-timer::before { content: '⏱ '; }
+        .icon-target::before { 
+            content: '◎ '; 
+            color: var(--accent-teal); 
+            animation: iconBounce 2s ease-in-out infinite;
+        }
+        .icon-check::before { content: '✓ '; color: var(--accent-teal); }
+        .icon-cross::before { content: '✗ '; color: var(--accent-coral); }
+        .icon-arrow::before { content: '→ '; }
+        .icon-star::before { content: '★ '; color: var(--accent-amber); }
+        
+        @keyframes iconBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        @media (max-width: 768px) {
+            .slide-container {
+                margin: 10px;
+                width: calc(100vw - 20px);
+                height: calc(100vh - 20px);
+            }
+            
+            .slide-wrapper {
+                padding: 20px 10px;
+            }
+            
+            .slide {
+                padding: 10px 20px;
+            }
+            
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            h3 { 
+                font-size: 1.6rem; 
+                padding: 8px 16px;
+            }
+            
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            .navigation {
+                padding: 15px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="slide-wrapper">
+            <div class="slide active">
+                <div class="slide-number">1 / 25</div>
+                <div class="slide-content">
+                    <h1>English Business Communication Workshop</h1>
+                    <h2>Breaking the Ice and Mastering Fluency</h2>
+                    <div class="glass-card">
+                        <p><strong>Instructor:</strong> Pling</p>
+                        <p><strong>Date:</strong> July 16, 2025</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">2 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">3 minutes</span>
+                    <h3>Workshop Objectives</h3>
+                    <div class="glass-card">
+                        <ul>
+                            <li>Create an engaging classroom atmosphere</li>
+                            <li>Identify Ms. Trang’s learning preferences</li>
+                            <li>Teach key grammar for professional communication</li>
+                            <li>Deep dive into the shadowing technique for fluency</li>
+                            <li>Create a concise life mindmap for English practice</li>
+                            <li>Evaluate progress and assign actionable homework</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">3 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">5 minutes</span>
+                    <h3>Icebreaker Introduction</h3>
+                    <div class="glass-card">
+                        <p><strong>Objective:</strong> Foster a fun, interactive environment</p>
+                        <p><strong>Activity:</strong> Watch a short, humorous business video (e.g., a funny office scenario)</p>
+                        <p><strong>Why?</strong></p>
+                        <ul>
+                            <li>Encourages relaxed participation</li>
+                            <li>Sparks English conversation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">4 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">3 minutes</span>
+                    <h3>Icebreaker Video Discussion</h3>
+                    <div class="glass-card">
+                        <p><strong>Video:</strong> “The Office: Awkward Client Call” (3-minute clip)</p>
+                        <p><strong>Discussion Questions:</strong></p>
+                        <ul>
+                            <li>What made the call awkward?</li>
+                            <li>How would you handle a similar situation?</li>
+                            <li>What communication skills could improve this?</li>
+                        </ul>
+                        <div class="practice-scenario">
+                            <p><strong>Instructions:</strong> Pair up, discuss for 5 minutes, share with class</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">5 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">3 minutes</span>
+                    <h3>Setting Class Rules</h3>
+                    <div class="glass-card">
+                        <p><strong>Objective:</strong> Build a collaborative learning space</p>
+                        <p><strong>Activity:</strong> Co-create 3-5 class rules</p>
+                        <div class="example-box">
+                            <p><strong>Example Rules:</strong></p>
+                            <ul>
+                                <li>Speak only in English during activities</li>
+                                <li>Encourage and respect all contributions</li>
+                                <li>Stay engaged and prepared</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">6 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">5 minutes</span>
+                    <h3>Gathering Insights from Ms. Trang</h3>
+                    <div class="glass-card">
+                        <p><strong>Objective:</strong> Understand Ms. Trang’s learning needs</p>
+                        <p><strong>Questions:</strong></p>
+                        <ul>
+                            <li>What’s your experience with English in business?</li>
+                            <li>What are your workshop goals?</li>
+                            <li>Do you prefer visual, auditory, or hands-on learning?</li>
+                        </ul>
+                        <p><strong>Method:</strong> One-on-one discussion (noted for personalization)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">7 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">5 minutes</span>
+                    <h3>Personal Learning Strategies</h3>
+                    <div class="glass-card">
+                        <p><strong>Objective:</strong> Match strategies to Ms. Trang’s style</p>
+                        <p><strong>Common Strategies:</strong></p>
+                        <ul>
+                            <li><span class="level-indicator level-1">Visual:</span> Flashcards, diagrams</li>
+                            <li><span class="level-indicator level-2">Auditory:</span> Shadowing, podcasts</li>
+                            <li><span class="level-indicator level-3">Kinesthetic:</span> Role-plays, interactive tasks</li>
+                            <li><span class="level-indicator level-3">Read/Write:</span> Summaries, note-taking</li>
+                        </ul>
+                        <div class="practice-scenario">
+                            <p><strong>Activity:</strong> Quiz to identify preferences</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">8 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">8 minutes</span>
+                    <h3>Testing Learning Strategies</h3>
+                    <div class="glass-card">
+                        <p><strong>Activity:</strong> Try each strategy briefly</p>
+                        <ul>
+                            <li><span class="level-indicator level-1">Visual:</span> Sketch a business term diagram</li>
+                            <li><span class="level-indicator level-2">Auditory:</span> Summarize a 30-second podcast clip</li>
+                            <li><span class="level-indicator level-3">Kinesthetic:</span> Role-play a client greeting</li>
+                        </ul>
+                        <div class="practice-scenario">
+                            <p><strong>Feedback:</strong> Ms. Trang rates comfort level (1-5)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">9 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">3 minutes</span>
+                    <h3>Vocabulary Mindset Session</h3>
+                    <div class="glass-card">
+                        <p><strong>Objective:</strong> Build confidence with business vocabulary</p>
+                        <p><strong>Mindset Tips:</strong></p>
+                        <ul>
+                            <li>Mistakes are stepping stones to fluency</li>
+                            <li>Use new words in daily conversations</li>
+                            <li>Focus on progress, not perfection</li>
+                        </ul>
+                        <div class="golden-rule">
+                            <p>“Mastering words unlocks confidence.”</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">10 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">5 minutes</span>
+                    <h3>Key Business Vocabulary</h3>
+                    <div class="glass-card">
+                        <p><strong>Categories:</strong></p>
+                        <ul>
+                            <li><strong>Meetings:</strong> agenda /əˈdʒendə/ <span class="vietnamese">(Chương trình nghị sự)</span>, facilitate /fəˈsɪlɪteɪt/ <span class="vietnamese">(Điều phối)</span>, deliverables /dɪˈlɪvərəbəlz/ <span class="vietnamese">(Kết quả đầu ra)</span></li>
+                            <li><strong>Emails:</strong> courtesy /ˈkɜːrtəsi/ <span class="vietnamese">(Lịch sự)</span>, escalate /ˈeskəleɪt/ <span class="vietnamese">(Nâng cấp)</span>, confirm /kənˈfɜːrm/ <span class="vietnamese">(Xác nhận)</span></li>
+                            <li><strong>Negotiations:</strong> win-win /wɪn-wɪn/ <span class="vietnamese">(Có lợi đôi bên)</span>, concession /kənˈseʃn/ <span class="vietnamese">(Nhượng bộ)</span>, stakeholder /ˈsteɪkhoʊldər/ <span class="vietnamese">(Bên liên quan)</span></li>
+                        </ul>
+                        <div class="practice-scenario">
+                            <p><strong>Activity:</strong> Match words to meanings (handout)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">11 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">5 minutes</span>
+                    <h3>Vocabulary Practice Script</h3>
+                    <div class="glass-card">
+                        <p><strong>Scenario:</strong> Meeting follow-up email</p>
+                        <div class="script-box">
+                            <p>Dear [Name],<br>Thank you for joining our meeting. Please <span class="highlight">confirm</span> your availability for the next session and review the attached <span class="highlight">deliverables</span>.<br>Kind regards,<br>[Your Name]</p>
+                        </div>
+                        <div class="practice-scenario">
+                            <p><strong>Activity:</strong> Rewrite using 3 new vocabulary words</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">12 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">5 minutes</span>
+                    <h3>Basic Grammar for Business</h3>
+                    <div class="glass-card">
+                        <p><strong>Objective:</strong> Strengthen grammar for professional use</p>
+                        <p><strong>Key Points:</strong></p>
+                        <ul>
+                            <li><span class="highlight">Subject-Verb Agreement:</span> “The team is ready.”</li>
+                            <li><span class="highlight">Tense Consistency:</span> Use present for ongoing projects</li>
+                            <li><span class="highlight">Articles:</span> “The report” vs. “A report”</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">13 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">5 minutes</span>
+                    <h3>Grammar Practice Activity</h3>
+                    <div class="glass-card">
+                        <p><strong>Task:</strong> Correct errors in a sample email</p>
+                        <div class="example-box two-column">
+                            <div class="comparison-wrong">
+                                <p><strong>Incorrect:</strong> “We was discussing about project.”</p>
+                            </div>
+                            <div class="comparison-right">
+                                <p><strong>Correct:</strong> “We were discussing the project.”</p>
+                            </div>
+                        </div>
+                        <div class="practice-scenario">
+                            <p><strong>Activity:</strong> Edit a short email with 5 errors</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">14 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">3 minutes</span>
+                    <h3>Grammar Considerations</h3>
+                    <div class="glass-card">
+                        <p><strong>Key Notes:</strong></p>
+                        <ul>
+                            <li><span class="highlight">Subject-Verb Agreement:</span> Avoid singular/plural errors</li>
+                            <li><span class="highlight">Tense Consistency:</span> Mixed tenses reduce clarity</li>
+                            <li><span class="highlight">Articles:</span> Incorrect use impacts professionalism</li>
+                        </ul>
+                        <p><span class="highlight icon-star">Tip:</span> Proofread by reading aloud</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">15 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">3 minutes</span>
+                    <h3>Shadowing Technique Overview</h3>
+                    <div class="glass-card">
+                        <p><strong>What is Shadowing?</strong></p>
+                        <ul>
+                            <li>Repeating after a native speaker to mimic pronunciation, rhythm, and intonation</li>
+                            <li>Boosts fluency, listening, and confidence</li>
+                        </ul>
+                        <p><strong>Why for Business?</strong></p>
+                        <ul>
+                            <li>Enhances clarity in calls, presentations, and meetings</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">16 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">3 minutes</span>
+                    <h3>Benefits of Shadowing</h3>
+                    <div class="glass-card">
+                        <p><strong>Key Advantages:</strong></p>
+                        <ul>
+                            <li>Improves pronunciation accuracy</li>
+                            <li>Builds natural speech patterns</li>
+                            <li>Enhances listening comprehension</li>
+                            <li>Increases confidence in real-time conversations</li>
+                        </ul>
+                        <div class="example-box">
+                            <p><strong>Example:</strong> Shadowing a TED Talk improves pitch delivery</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">17 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">3 minutes</span>
+                    <h3>Shadowing Technique Steps</h3>
+                    <div class="formula-box">
+                        <p><strong>Steps:</strong></p>
+                        <ul>
+                            <li><span class="icon-target">Select:</span> A short, clear audio (e.g., business podcast or speech)</li>
+                            <li><span class="icon-target">Listen:</span> Once to understand context</li>
+                            <li><span class="icon-target">Repeat:</span> Simultaneously, mimicking tone and pace</li>
+                            <li><span class="icon-target">Record:</span> Yourself and compare to the original</li>
+                            <li><span class="icon-target">Practice:</span> 2-3 times for improvement</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">18 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">5 minutes</span>
+                    <h3>Shadowing Demo</h3>
+                    <div class="glass-card">
+                        <p><strong>Clip:</strong> 1-minute business pitch from a TED Talk</p>
+                        <div class="script-box">
+                            <p><strong>Example Script:</strong><br>“Our innovative solution streamlines operations and boosts efficiency.”</p>
+                        </div>
+                        <p><strong>Demo:</strong> Instructor shadows clip, highlighting intonation</p>
+                        <div class="practice-scenario">
+                            <p><strong>Activity:</strong> Ms. Trang tries shadowing the same clip</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">19 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">8 minutes</span>
+                    <h3>Shadowing Practice Activity 1</h3>
+                    <div class="glass-card">
+                        <p><strong>Task:</strong> Shadow a 30-second business dialogue</p>
+                        <div class="script-box">
+                            <p><strong>Script Example:</strong><br>“I’d like to discuss our quarterly goals and align on priorities.”</p>
+                        </div>
+                        <div class="practice-scenario">
+                            <p><strong>Instructions:</strong></p>
+                            <ul>
+                                <li>Repeat after speaker 3 times</li>
+                                <li>Focus on stress, pauses, and clarity</li>
+                            </ul>
+                            <p><strong>Feedback:</strong> Record and review for improvement</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">20 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">8 minutes</span>
+                    <h3>Shadowing Practice Activity 2</h3>
+                    <div class="glass-card">
+                        <p><strong>Task:</strong> Shadow a 45-second client negotiation clip</p>
+                        <div class="script-box">
+                            <p><strong>Script Example:</strong><br>“We aim for a <span class="highlight">win-win</span> solution to meet both parties’ needs.”</p>
+                        </div>
+                        <div class="practice-scenario">
+                            <p><strong>Instructions:</strong></p>
+                            <ul>
+                                <li>Shadow twice, focusing on tone</li>
+                                <li>Discuss challenges (e.g., fast speech, accents)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">21 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">3 minutes</span>
+                    <h3>Life Mindmap Introduction</h3>
+                    <div class="glass-card">
+                        <p><strong>Objective:</strong> Practice concise English storytelling</p>
+                        <p><strong>Purpose:</strong></p>
+                        <ul>
+                            <li>Develop structured self-expression</li>
+                            <li>Build confidence in speaking</li>
+                        </ul>
+                        <p><strong>Tool:</strong> Simple mindmap (e.g., career, goals)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">22 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">3 minutes</span>
+                    <h3>Brainstorming Mindmap Questions</h3>
+                    <div class="glass-card">
+                        <p><strong>Sample Questions:</strong></p>
+                        <ul>
+                            <li>What’s a key achievement in your career?</li>
+                            <li>What professional goal are you working toward?</li>
+                            <li>Describe a skill you’re proud of.</li>
+                        </ul>
+                        <div class="practice-scenario">
+                            <p><strong>Activity:</strong> Ms. Trang answers 2 questions to start</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">23 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">5 minutes</span>
+                    <h3>Creating and Presenting the Mindmap</h3>
+                    <div class="glass-card">
+                        <p><strong>Structure:</strong></p>
+                        <ul>
+                            <li><span class="icon-target">Central Node:</span> Ms. Trang’s Name</li>
+                            <li><span class="icon-target">Branches:</span> Career, Skills, Goals</li>
+                        </ul>
+                        <div class="practice-scenario">
+                            <p><strong>Activity:</strong> Draw a simple mindmap, present in English (2-3 minutes)</p>
+                            <p><strong>Guidelines:</strong></p>
+                            <ul>
+                                <li>Use simple sentences</li>
+                                <li>Include 2 new vocabulary words</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">24 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">3 minutes</span>
+                    <h3>Lesson Evaluation and Feedback</h3>
+                    <div class="glass-card">
+                        <p><strong>Reflection Questions:</strong></p>
+                        <ul>
+                            <li>Which activity (e.g., shadowing) was most effective?</li>
+                            <li>What was challenging about speaking English?</li>
+                            <li>Suggestions for future sessions?</li>
+                        </ul>
+                        <p><strong>Method:</strong> Oral or written feedback from Ms. Trang</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slide">
+                <div class="slide-number">25 / 25</div>
+                <div class="slide-content">
+                    <span class="timer icon-timer">3 minutes</span>
+                    <h3>Homework Assignment</h3>
+                    <div class="glass-card">
+                        <p><strong>Tasks:</strong></p>
+                        <ul>
+                            <li>Write a 100-word business email using 5 new vocabulary words</li>
+                            <li>Shadow a 1-minute business podcast clip (record and review)</li>
+                            <li>Add 1 branch to your mindmap with 2 details</li>
+                        </ul>
+                        <p><strong>Submission:</strong> Email by next session</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" style="width: 4%"></div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn"><span class="icon-arrow"></span> Previous</button>
+            <button class="nav-btn">Next <span class="icon-arrow"></span></button>
+        </div>
+    </div>
+
+    <script>
+        // Slide navigation
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.querySelector('.nav-btn:nth-child(1)');
+        const nextBtn = document.querySelector('.nav-btn:nth-child(2)');
+        const progressBar = document.querySelector('.progress-bar');
+        let currentSlide = 0;
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentSlide);
+            });
+            progressBar.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+            prevBtn.disabled = currentSlide === 0;
+            nextBtn.disabled = currentSlide === slides.length - 1;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        });
+
+        updateSlide();
+
+        // Copy script text on click
+        document.querySelectorAll('.script-box').forEach(box => {
+            box.addEventListener('click', () => {
+                const text = box.textContent.replace('Click to copy', '').trim();
+                navigator.clipboard.writeText(text);
+                box.classList.add('copied');
+                box.setAttribute('data-after', 'Copied!');
+                setTimeout(() => {
+                    box.classList.remove('copied');
+                    box.setAttribute('data-after', 'Click to copy');
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
+```

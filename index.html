@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Business Communication Workshop</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-dark: #0A0E27;
+            --primary-mid: #0F3443;
+            --primary-light: #0A4D4D;
+            --accent-teal: #64FFDA;
+            --accent-purple: #7C4DFF;
+            --accent-coral: #FF6B9D;
+            --accent-amber: #FFB74D;
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-shadow: rgba(0, 0, 0, 0.4);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-mid) 50%, var(--primary-light) 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            position: relative;
+            background-attachment: fixed;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(100, 255, 218, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(124, 77, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 20%, rgba(255, 107, 157, 0.1) 0%, transparent 50%);
+            animation: meshMove 20s ease-in-out infinite;
+            z-index: -1;
+        }
+        
+        @keyframes meshMove {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+        }
+        
+        .slide-container {
+            position: relative;
+            width: calc(100vw - 60px);
+            height: calc(100vh - 60px);
+            margin: 30px auto;
+            max-width: 1400px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px var(--glass-shadow),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .slide-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            padding: 40px 20px;
+        }
+        
+        .slide-wrapper::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .slide-wrapper::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        
+        .slide-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(100, 255, 218, 0.3);
+            border-radius: 4px;
+        }
+        
+        .slide-wrapper::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 255, 218, 0.5);
+        }
+        
+        .slide {
+            min-height: calc(100vh - 180px);
+            padding: 20px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .slide-content {
+            width: 100%;
+            margin: auto 0;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--accent-teal) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 8px rgba(100, 255, 218, 0.3));
+        }
+        
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--text-primary);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .slide-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .slide-list li {
+            margin: 15px 0;
+        }
+        
+        .slide-list a {
+            display: block;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .slide-list a:hover {
+            background: rgba(100, 255, 218, 0.1);
+            transform: translateX(10px);
+            border-color: var(--accent-teal);
+            box-shadow: 0 6px 20px rgba(100, 255, 218, 0.3);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .slide-container {
+                margin: 10px;
+                width: calc(100vw - 20px);
+                height: calc(100vh - 20px);
+            }
+            
+            .slide-wrapper {
+                padding: 20px 10px;
+            }
+            
+            .slide {
+                padding: 10px 20px;
+            }
+            
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+            
+            .slide-list a {
+                padding: 15px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="slide-wrapper">
+            <div class="slide active">
+                <div class="slide-content">
+                    <h1>“Own Your Voice” Program</h1>
+                    <h2>An 8-Week Coaching Experience in Expressive & Intentional English Communication</h2>
+                    <div class="glass-card">
+                        <p>Select a week below to begin your journey to mastering expressive and intentional English communication.</p>
+                        <ul class="slide-list">
+                            <li><a href="slides/week1.html">Week 1: Mindset & Learning Techniques</a></li>
+                            <li><a href="slides/week2.html">Week 2: Personal Identity Storytelling</a></li>
+                            <li><a href="slides/week3.html">Week 3: Daily Conversation</a></li>
+                            <li><a href="slides/week4.html">Week 4: Interview & Self-Reflection</a></li>
+                            <li><a href="slides/week5.html">Week 5: Business English Basics</a></li>
+                            <li><a href="slides/week6.html">Week 6: Business Case Discussions</a></li>
+                            <li><a href="slides/week7.html">Week 7: Live Interaction & Soft Skills</a></li>
+                            <li><a href="slides/week8.html">Week 8: Entrepreneurial Thinking & Pitch</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <p>© 2025 “Own Your Voice” Program. Build with passion.</p>
+        </footer>
+    </div>
+</body>
+</html>
